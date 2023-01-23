@@ -47,7 +47,7 @@ task LumpyExpress{
         File lumpy_vcf = '~{filename_prefix}_lumpy.vcf'
     }
     runtime{
-        memory: "~{select_first([memory_override, 7])} GB"
+        memory: "~{select_first([memory_override, 35])} GB"
         walltime: "~{select_first([walltime_override, 96])}:00"
         cpu: 1
         docker: '~{docker_image}'

@@ -138,7 +138,7 @@ task InferHaps{
         File haplotypes = "haplotypes.tsv"
     }
     runtime{
-        memory: "~{select_first([memory_override, 14])} GB"
+        memory: "~{select_first([memory_override, 24])} GB"
         walltime: "~{select_first([walltime_override, 24])}:00"
         cpu: 1
         docker: '~{docker_image}'

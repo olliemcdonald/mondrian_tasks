@@ -45,6 +45,7 @@ task IdentifyNormalCells{
         --reads_data ~{hmmcopy_reads} \
         --metrics_data ~{hmmcopy_metrics} \
         --output_yaml ~{filename_prefix}_normals.yaml \
+        --output_csv ~{filename_prefix}_normals.csv.gz \
         --reference_name ~{reference_name} \
         --relative_aneuploidy_threshold ~{relative_aneuploidy_threshold} \
         --ploidy_threshold ~{ploidy_threshold} \
@@ -52,6 +53,8 @@ task IdentifyNormalCells{
     >>>
     output{
         File normal_cells_yaml = '~{filename_prefix}_normals.yaml'
+        File normal_csv = '~{filename_prefix}_normals.csv.gz'
+        File normal_csv_yaml = '~{filename_prefix}_normals.csv.gz.yaml'
     }
     runtime{
         memory: "~{select_first([memory_override, 20])} GB"

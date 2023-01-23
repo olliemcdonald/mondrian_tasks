@@ -94,6 +94,7 @@ task PlotHeatmap{
         File metrics
         File metrics_yaml
         Array[String] chromosomes
+        String? sidebar_column='pick_met'
         String? filename_prefix = "heatmap"
         String? singularity_image
         String? docker_image
@@ -102,7 +103,8 @@ task PlotHeatmap{
     }
     command<<<
         hmmcopy_utils heatmap --reads ~{reads} --metrics ~{metrics} \
-        --output ~{filename_prefix}.pdf --chromosomes ~{sep=" "chromosomes}
+        --output ~{filename_prefix}.pdf --chromosomes ~{sep=" "chromosomes} \
+        --sidebar_column ~{sidebar_column}
      >>>
     output{
         File heatmap_pdf = '~{filename_prefix}.pdf'

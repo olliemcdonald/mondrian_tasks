@@ -12,7 +12,7 @@ task RunGridss{
         File reference_fa_bwt
         File reference_fa_pac
         File reference_fa_sa
-        Int? jvm_heap_gb = 10
+        Int? jvm_heap_gb = 30
         String? filename_prefix = "gridsss"
         String? singularity_image
         String? docker_image

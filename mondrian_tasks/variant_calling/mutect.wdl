@@ -61,6 +61,7 @@ task RunMutect{
         Int? walltime_override
     }
     command<<<
+        set -e
 
         gatk GetSampleName -R ~{reference} -I ~{tumour_bam} -O tumour_name.txt
         gatk GetSampleName -R ~{reference} -I ~{normal_bam} -O normal_name.txt
@@ -112,7 +113,7 @@ task RunMutect{
         Array[File] f1r2 = glob("raw_data/*_f1r2.tar.gz")
     }
     runtime{
-        memory: "~{select_first([memory_override, 7])} GB"
+        memory: "~{select_first([memory_override, 21])} GB"
         walltime:  "~{select_first([walltime_override, 24])}:00"
         cpu: "~{num_threads}"
         docker: '~{docker_image}'
@@ -339,7 +340,7 @@ task LearnReadOrientationModel {
         File artifact_prior_table = "artifact-priors.tar.gz"
     }
     runtime{
-        memory: "~{select_first([memory_override, 14])} GB"
+        memory: "~{select_first([memory_override, 28])} GB"
         walltime:  "~{select_first([walltime_override, 24])}:00"
         cpu: 1
         docker: '~{docker_image}'

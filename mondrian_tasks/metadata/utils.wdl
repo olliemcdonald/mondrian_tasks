@@ -7,6 +7,7 @@ task SeparateTumourAndNormalMetadata{
         File normal_bai
         File tumour_bam
         File tumour_bai
+        File heatmap
         File metadata_input
         String? singularity_image
         String? docker_image
@@ -18,7 +19,8 @@ task SeparateTumourAndNormalMetadata{
         --normal_bam ~{normal_bam} ~{normal_bai} \
         --tumour_bam ~{tumour_bam} ~{tumour_bai} \
         --metadata_output metadata.yaml \
-        --metadata_input ~{metadata_input}
+        --metadata_input ~{metadata_input} \
+        --heatmap heatmap
     >>>
     output{
         File metadata_output = "metadata.yaml"

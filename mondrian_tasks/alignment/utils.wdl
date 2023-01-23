@@ -19,6 +19,29 @@ struct Reference{
     File reference_fa_sa
 }
 
+task read_samplesheet{
+    input{
+        File samplesheet
+        String? singularity_image
+        String? docker_image
+        Int? memory_override
+        Int? walltime_override
+    }
+    command{
+      echo "noop"
+    }
+    output{
+        Array[Cell] fastq_files = read_json("~{samplesheet}")
+    }
+    runtime{
+        memory: '~{select_first([memory_override, 7])} GB'
+        walltime: "~{select_first([walltime_override, 6])}:00"
+        cpu: 1
+        docker: '~{docker_image}'
+        singularity: '~{singularity_image}'
+    }
+}
+
 
 task AlignPostprocessAllLanes{
     input {
