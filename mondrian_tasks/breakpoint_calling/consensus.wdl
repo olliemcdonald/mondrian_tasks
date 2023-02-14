@@ -6,6 +6,7 @@ task Consensus{
         File lumpy
         File svaba
         File gridss
+        File? blacklist_bed
         String? filename_prefix = "breakpoint_consensus"
         String sample_id
         String? region
@@ -15,6 +16,7 @@ task Consensus{
         Int? walltime_override
     }
     String region_str = if defined(region) then '--region ~{region}' else ''
+    String blacklist_str = if defined(blacklist_bed) then '--blacklist_bed ~{blacklist_bed}' else ''
     command<<<
         mkdir tempdir
         breakpoint_utils consensus \
@@ -22,7 +24,8 @@ task Consensus{
         --lumpy ~{lumpy} --svaba ~{svaba} \
         --gridss ~{gridss} --consensus ~{filename_prefix}_consensus.csv.gz --sample_id ~{sample_id} \
         --tempdir tempdir \
-        ~{region_str}
+        ~{region_str} \
+        ~{blacklist_str}
     >>>
     output{
         File consensus = "~{filename_prefix}_consensus.csv.gz"
