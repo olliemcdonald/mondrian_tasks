@@ -31,6 +31,7 @@ task IdentifyNormalCells{
         File hmmcopy_metrics
         File hmmcopy_metrics_yaml
         String reference_name
+        File blacklist_file
         Float? relative_aneuploidy_threshold = 0.05
         Float? ploidy_threshold = 2.5
         Float? allowed_aneuploidy_score = 0.0
@@ -47,6 +48,7 @@ task IdentifyNormalCells{
         --output_yaml ~{filename_prefix}_normals.yaml \
         --output_csv ~{filename_prefix}_normals.csv.gz \
         --reference_name ~{reference_name} \
+        --blacklist_file ~{blacklist_file} \
         --relative_aneuploidy_threshold ~{relative_aneuploidy_threshold} \
         --ploidy_threshold ~{ploidy_threshold} \
         --allowed_aneuploidy_score ~{allowed_aneuploidy_score}
