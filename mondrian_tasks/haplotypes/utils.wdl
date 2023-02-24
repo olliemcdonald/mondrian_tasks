@@ -83,20 +83,22 @@ task ExtractChromosomeSeqData{
 }
 
 
-task InferSnpGenotypeFromNormal{
+task InferSnpGenotype{
     input{
         File seqdata
         String chromosome
+        String data_type = 'normal'
         String? singularity_image
         String? docker_image
         Int? memory_override
         Int? walltime_override
     }
     command<<<
-    haplotype_utils infer_snp_genotype_from_normal \
+    haplotype_utils infer_snp_genotype \
     --seqdata ~{seqdata} \
     --output snp_genotype.tsv \
-    --chromosome  ~{chromosome}
+    --chromosome  ~{chromosome} \
+    --data_type ~{data_type}
     >>>
     output{
         File snp_genotype = "snp_genotype.tsv"
