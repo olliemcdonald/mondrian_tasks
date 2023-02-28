@@ -3,10 +3,10 @@ version 1.0
 
 task SeparateTumourAndNormalMetadata{
     input{
-        File normal_bam
-        File normal_bai
-        File tumour_bam
-        File tumour_bai
+        String? normal_bam
+        String? normal_bai
+        String? tumour_bam
+        String? tumour_bai
         File heatmap
         File metadata_input
         String? singularity_image
@@ -14,13 +14,14 @@ task SeparateTumourAndNormalMetadata{
         Int? memory_override
         Int? walltime_override
     }
+    String normal_bam_arg = if defined(normal_bam) then "--normal_bam ~{normal_bam} ~{normal_bai}" else ""
+    String tumour_bam_arg = if defined(normal_bam) then "--tumour_bam ~{tumour_bam} ~{tumour_bai}" else ""
     command<<<
         metadata_utils separate_tumour_and_normal \
-        --normal_bam ~{normal_bam} ~{normal_bai} \
-        --tumour_bam ~{tumour_bam} ~{tumour_bai} \
         --metadata_output metadata.yaml \
         --metadata_input ~{metadata_input} \
-        --heatmap heatmap
+        --heatmap heatmap \
+        ~{normal_bam_arg} ~{tumour_bam_arg}
     >>>
     output{
         File metadata_output = "metadata.yaml"
