@@ -9,6 +9,7 @@ task SeparateTumourAndNormalMetadata{
         String? tumour_bai
         File heatmap
         File metadata_input
+        File normal_cells_yaml
         String? singularity_image
         String? docker_image
         Int? memory_override
@@ -21,6 +22,7 @@ task SeparateTumourAndNormalMetadata{
         --metadata_output metadata.yaml \
         --metadata_input ~{metadata_input} \
         --heatmap heatmap \
+        --normal_cells_yaml ~{normal_cells_yaml} \
         ~{normal_bam_arg} ~{tumour_bam_arg}
     >>>
     output{
