@@ -74,8 +74,8 @@ task ExtractChromosomeSeqData{
         File seqdata = "output.h5"
     }
     runtime{
-        memory: "~{select_first([memory_override, 14])} GB"
-        walltime: "~{select_first([walltime_override, 24])}:00"
+        memory: "~{select_first([memory_override, 24])} GB"
+        walltime: "~{select_first([walltime_override, 72])}:00"
         cpu: 1
         docker: '~{docker_image}'
         singularity: '~{singularity_image}'

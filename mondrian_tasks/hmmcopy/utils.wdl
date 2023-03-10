@@ -94,6 +94,7 @@ task PlotHeatmap{
         File metrics
         File metrics_yaml
         Array[String] chromosomes
+        Boolean disable_clustering=false
         String? sidebar_column='pick_met'
         String? filename_prefix = "heatmap"
         String? singularity_image
@@ -104,7 +105,8 @@ task PlotHeatmap{
     command<<<
         hmmcopy_utils heatmap --reads ~{reads} --metrics ~{metrics} \
         --output ~{filename_prefix}.pdf --chromosomes ~{sep=" "chromosomes} \
-        --sidebar_column ~{sidebar_column}
+        --sidebar_column ~{sidebar_column} \
+        ~{true='--disable_clustering' false='' disable_clustering}
      >>>
     output{
         File heatmap_pdf = '~{filename_prefix}.pdf'
