@@ -79,42 +79,13 @@ task SeparateNormalAndTumourBams{
 }
 
 
-task NormalHeatmap{
-    input{
-        File metrics
-        File metrics_yaml
-        File reads
-        File reads_yaml
-        String? filename_prefix = "separate_normal_and_tumour"
-        String? singularity_image
-        String? docker_image
-        Int? memory_override
-        Int? walltime_override
-    }
-    command<<<
-        normalizer_utils normal_heatmap \
-        --metrics ~{metrics} \
-        --reads ~{reads} \
-        --output ~{filename_prefix}.pdf
-    >>>
-    output{
-        File output_png = '~{filename_prefix}.pdf'
-    }
-    runtime{
-        memory: "~{select_first([memory_override, 20])} GB"
-        walltime: "~{select_first([walltime_override, 6])}:00"
-        cpu: 1
-        docker: '~{docker_image}'
-        singularity: '~{singularity_image}'
-    }
-}
-
 task AneuploidyHeatmap{
     input{
         File metrics
         File metrics_yaml
         File reads
         File reads_yaml
+        Float aneuploidy_score = 0
         String? filename_prefix = "separate_normal_and_tumour"
         String? singularity_image
         String? docker_image
@@ -125,10 +96,11 @@ task AneuploidyHeatmap{
         normalizer_utils aneuploidy_heatmap \
         --metrics ~{metrics} \
         --reads ~{reads} \
-        --output ~{filename_prefix}.pdf
+        --output ~{filename_prefix}.pdf \
+        --aneuploidy_score ~{aneuploidy_score}
     >>>
     output{
-        File output_png = '~{filename_prefix}.pdf'
+        File output_pdf = '~{filename_prefix}.pdf'
     }
     runtime{
         memory: "~{select_first([memory_override, 20])} GB"
