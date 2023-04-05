@@ -11,15 +11,19 @@ task RunReadCounter{
         File contaminated_baifile
         File repeats_satellite_regions
         Array[String] chromosomes
+        Int num_threads=16
         String? singularity_image
         String? docker_image
         Int? memory_override
         Int? walltime_override
     }
     command<<<
-        hmmcopy_utils readcounter --infile ~{bamfile} --outdir output -w 500000 --chromosomes ~{sep=" "chromosomes} -m 20 --exclude_list ~{repeats_satellite_regions}
-        hmmcopy_utils readcounter --infile ~{control_bamfile} --outdir output_control -w 500000 --chromosomes ~{sep=" "chromosomes} -m 20 --exclude_list ~{repeats_satellite_regions}
-        hmmcopy_utils readcounter --infile ~{contaminated_bamfile} --outdir output_contaminated -w 500000 --chromosomes ~{sep=" "chromosomes} -m 20 --exclude_list ~{repeats_satellite_regions}
+        hmmcopy_utils readcounter --infile ~{bamfile} --outdir output -w 500000 --chromosomes ~{sep=" "chromosomes} \
+        -m 20 --exclude_list ~{repeats_satellite_regions} --tempdir all_cells_temp --ncores ~{num_threads}
+        hmmcopy_utils readcounter --infile ~{control_bamfile} --outdir output_control -w 500000 --chromosomes ~{sep=" "chromosomes} \
+        -m 20 --exclude_list ~{repeats_satellite_regions} --tempdir control_temp --ncores ~{num_threads}
+        hmmcopy_utils readcounter --infile ~{contaminated_bamfile} --outdir output_contaminated -w 500000 --chromosomes ~{sep=" "chromosomes} \
+        -m 20 --exclude_list ~{repeats_satellite_regions} --tempdir contaminated_temp --ncores ~{num_threads}
     >>>
     output{
         Array[File] wigs = glob('output*/*.wig')
@@ -27,7 +31,7 @@ task RunReadCounter{
     runtime{
         memory: "~{select_first([memory_override, 10])} GB"
         walltime: "~{select_first([walltime_override, 24])}:00"
-        cpu: 1
+        cpu: "~{num_threads}"
         docker: '~{docker_image}'
         singularity: '~{singularity_image}'
     }
