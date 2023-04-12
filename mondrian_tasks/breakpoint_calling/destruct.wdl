@@ -80,3 +80,38 @@ task ExtractSomatic{
         singularity: '~{singularity_image}'
     }
 }
+
+task DestructCsvToVcf{
+    input{
+        File destruct_csv
+        File reference_fasta
+        String sample_id
+        String? filename_prefix = "destruct"
+        String? singularity_image
+        String? docker_image
+        Int? memory_override
+        Int? walltime_override
+    }
+    command<<<
+        breakpoint_utils destruct_csv_to_vcf \
+        --infile ~{destruct_csv} \
+        --reference ~{reference_fasta} \
+        --outfile destruct.vcf \
+        --sample_id ~{sample_id}
+
+        vcf-sort destruct.vcf > destruct.sorted.vcf
+        bgzip destruct.sorted.vcf -c > ~{filename_prefix}.vcf.gz
+        tabix -f -p vcf ~{filename_prefix}.vcf.gz
+    >>>
+    output{
+        File outfile = "~{filename_prefix}.vcf.gz"
+        File outfile_tbi = "~{filename_prefix}.vcf.gz.tbi"
+    }
+    runtime{
+        memory: "~{select_first([memory_override, 7])} GB"
+        walltime: "~{select_first([walltime_override, 96])}:00"
+        cpu: 1
+        docker: '~{docker_image}'
+        singularity: '~{singularity_image}'
+    }
+}
