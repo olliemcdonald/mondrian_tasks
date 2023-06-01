@@ -5,10 +5,6 @@ task RunReadCounter{
     input{
         File bamfile
         File baifile
-        File control_bamfile
-        File control_baifile
-        File contaminated_bamfile
-        File contaminated_baifile
         File repeats_satellite_regions
         Array[String] chromosomes
         Int num_threads=16
@@ -20,10 +16,6 @@ task RunReadCounter{
     command<<<
         hmmcopy_utils readcounter --infile ~{bamfile} --outdir output -w 500000 --chromosomes ~{sep=" "chromosomes} \
         -m 20 --exclude_list ~{repeats_satellite_regions} --tempdir all_cells_temp --ncores ~{num_threads}
-        hmmcopy_utils readcounter --infile ~{control_bamfile} --outdir output_control -w 500000 --chromosomes ~{sep=" "chromosomes} \
-        -m 20 --exclude_list ~{repeats_satellite_regions} --tempdir control_temp --ncores ~{num_threads}
-        hmmcopy_utils readcounter --infile ~{contaminated_bamfile} --outdir output_contaminated -w 500000 --chromosomes ~{sep=" "chromosomes} \
-        -m 20 --exclude_list ~{repeats_satellite_regions} --tempdir contaminated_temp --ncores ~{num_threads}
     >>>
     output{
         Array[File] wigs = glob('output*/*.wig')

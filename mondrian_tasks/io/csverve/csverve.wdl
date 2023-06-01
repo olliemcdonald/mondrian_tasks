@@ -90,7 +90,7 @@ task MergeCsv{
     input{
         Array[File] inputfiles
         Array[File] inputyamls
-        String on
+        Array[String] on
         String how
         String? singularity_image
         String? docker_image
@@ -98,7 +98,7 @@ task MergeCsv{
         Int? walltime_override
     }
     command<<<
-        csverve merge --in_f ~{sep=" --in_f " inputfiles} --out_f merged.csv.gz --on ~{on} --how ~{how}
+        csverve merge --in_f ~{sep=" --in_f " inputfiles} --out_f merged.csv.gz --on ~{sep=" --on " on} --how ~{how}
     >>>
     output{
         File outfile = "merged.csv.gz"
