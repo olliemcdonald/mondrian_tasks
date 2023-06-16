@@ -77,7 +77,7 @@ task ConcatenateCsv {
         File outfile_yaml = "~{filename_prefix}.csv.gz.yaml"
     }
     runtime{
-        memory: "~{select_first([memory_override, 7])} GB"
+        memory: "~{select_first([memory_override, 18])} GB"
         walltime: "~{select_first([walltime_override, 6])}:00"
         cpu: 1
         docker: '~{docker_image}'

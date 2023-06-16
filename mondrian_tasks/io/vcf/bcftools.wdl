@@ -127,3 +127,78 @@ task FinalizeVcf{
         singularity: '~{singularity_image}'
     }
 }
+
+
+
+task MpileupAndCall{
+    input{
+        File bam
+        File bai
+        File reference_fasta
+        File reference_fasta_fai
+        File regions_vcf
+        String? filename_prefix = 'finalize_vcf'
+        String? singularity_image
+        String? docker_image
+        Int? memory_override
+        Int? walltime_override
+    }
+    command<<<
+        bcftools \
+        mpileup -Oz \
+        -f ~{reference_fasta} \
+        --regions-file ~{regions_vcf} \
+        ~{bam} \
+         -o chromosome_mpileup.vcf.gz
+
+        bcftools call -Oz \
+        -c chromosome_mpileup.vcf.gz \
+        -o chromosome_calls.vcf.gz
+        bcftools index chromosome_calls.vcf.gz
+
+    >>>
+    output{
+        File vcf_output = "chromosome_calls.vcf.gz"
+        File vcf_idx_output = "chromosome_calls.vcf.gz.csi"
+    }
+    runtime{
+        memory: "~{select_first([memory_override, 7])} GB"
+        walltime: "~{select_first([walltime_override, 6])}:00"
+        cpu: 1
+        docker: '~{docker_image}'
+        singularity: '~{singularity_image}'
+    }
+}
+
+task FilterHet{
+    input{
+        File bcf
+        File bcf_csi
+        String? filename_prefix = 'hets_only'
+        String? singularity_image
+        String? docker_image
+        Int? memory_override
+        Int? walltime_override
+    }
+    command<<<
+        bcftools filter -O z \
+        -o filtered.vcf.gz \
+        -i 'GT[0]="het"' \
+        ~{bcf}
+        bcftools index filtered.vcf.gz
+        tabix -f -p vcf filtered.vcf.gz
+    >>>
+    output{
+        File bcf_output = "filtered.vcf.gz"
+        File bcf_csi_output = "filtered.vcf.gz.csi"
+        File bcf_tbi_output = "filtered.vcf.gz.tbi"
+    }
+    runtime{
+        memory: "~{select_first([memory_override, 7])} GB"
+        walltime: "~{select_first([walltime_override, 6])}:00"
+        cpu: 1
+        docker: '~{docker_image}'
+        singularity: '~{singularity_image}'
+    }
+}
+

@@ -67,7 +67,7 @@ task GetRegionFromVcf{
 task SplitVcf{
     input{
         File input_vcf
-        String num_splits
+        Int num_splits
         String? singularity_image
         String? docker_image
         Int? memory_override
@@ -83,7 +83,7 @@ task SplitVcf{
         Array[File] output_tbi = glob("temp_output/*.vcf.gz.tbi")
     }
     runtime{
-        memory: "~{select_first([memory_override, 7])} GB"
+        memory: "~{select_first([memory_override, 14])} GB"
         walltime: "~{select_first([walltime_override, 6])}:00"
         cpu: 1
         docker: '~{docker_image}'

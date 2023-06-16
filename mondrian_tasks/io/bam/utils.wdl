@@ -3,6 +3,7 @@ version 1.0
 task SplitBam{
     input{
         File bam
+        File bai
         Array[String] chromosomes
         Int num_threads=8
         String? singularity_image

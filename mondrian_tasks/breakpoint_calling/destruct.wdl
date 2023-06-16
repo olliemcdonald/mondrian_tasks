@@ -54,7 +54,7 @@ task ExtractSomatic{
     input{
         File destruct_breakpoints
         File destruct_library
-        String? filename_prefix = "destruct"
+        String? filename_prefix = "extract_somatic"
         String? singularity_image
         String? docker_image
         Int? memory_override
@@ -64,13 +64,13 @@ task ExtractSomatic{
         destruct extract_somatic \
         ~{destruct_breakpoints} \
         ~{destruct_library} \
-        ~{filename_prefix}_somatic_breakpoints.csv \
-        ~{filename_prefix}_somatic_library.csv \
+        ~{filename_prefix}_destruct_somatic_breakpoints.csv \
+        ~{filename_prefix}_destruct_somatic_library.csv \
         --control_ids normal
     >>>
     output{
-        File breakpoint_table = "~{filename_prefix}_somatic_breakpoints.csv"
-        File library_table = "~{filename_prefix}_somatic_library.csv"
+        File breakpoint_table = "~{filename_prefix}_destruct_somatic_breakpoints.csv"
+        File library_table = "~{filename_prefix}_destruct_somatic_library.csv"
     }
     runtime{
         memory: "~{select_first([memory_override, 7])} GB"
@@ -80,6 +80,68 @@ task ExtractSomatic{
         singularity: '~{singularity_image}'
     }
 }
+
+task ExtractCounts{
+    input{
+        File destruct_reads
+        File bam
+        File bai
+        String region
+        String? filename_prefix = "destruct_cell_counts"
+        String? singularity_image
+        String? docker_image
+        Int? memory_override
+        Int? walltime_override
+    }
+    String region_str = if defined(region) then '--region ~{region}' else ''
+    command<<<
+        breakpoint_utils destruct_extract_cell_counts  \
+        --reads ~{destruct_reads} \
+        --bam ~{bam} \
+        --output ~{filename_prefix}_destruct_cell_counts.csv.gz \
+        ~{region_str}
+    >>>
+    output{
+        File output_csv = "~{filename_prefix}_destruct_cell_counts.csv.gz"
+        File output_yaml = "~{filename_prefix}_destruct_cell_counts.csv.gz.yaml"
+    }
+    runtime{
+        memory: "~{select_first([memory_override, 7])} GB"
+        walltime: "~{select_first([walltime_override, 96])}:00"
+        cpu: 1
+        docker: '~{docker_image}'
+        singularity: '~{singularity_image}'
+    }
+}
+
+task MergeCounts{
+    input{
+        Array[File] counts_files
+        Array[File] counts_files_yaml
+        String? filename_prefix = "destruct_cell_counts"
+        String? singularity_image
+        String? docker_image
+        Int? memory_override
+        Int? walltime_override
+    }
+    command<<<
+        breakpoint_utils destruct_merge_cell_counts  \
+        --infiles ~{sep=" "counts_files} \
+        --outfile ~{filename_prefix}_destruct_cell_counts_merged.csv.gz \
+    >>>
+    output{
+        File output_csv = "~{filename_prefix}_destruct_cell_counts_merged.csv.gz"
+        File output_yaml = "~{filename_prefix}_destruct_cell_counts_merged.csv.gz.yaml"
+    }
+    runtime{
+        memory: "~{select_first([memory_override, 7])} GB"
+        walltime: "~{select_first([walltime_override, 96])}:00"
+        cpu: 1
+        docker: '~{docker_image}'
+        singularity: '~{singularity_image}'
+    }
+}
+
 
 task DestructCsvToVcf{
     input{
