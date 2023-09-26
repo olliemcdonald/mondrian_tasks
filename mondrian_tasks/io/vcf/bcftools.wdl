@@ -162,8 +162,8 @@ task MpileupAndCall{
         File vcf_idx_output = "chromosome_calls.vcf.gz.csi"
     }
     runtime{
-        memory: "~{select_first([memory_override, 7])} GB"
-        walltime: "~{select_first([walltime_override, 6])}:00"
+        memory: "~{select_first([memory_override, 14])} GB"
+        walltime: "~{select_first([walltime_override, 48])}:00"
         cpu: 1
         docker: '~{docker_image}'
         singularity: '~{singularity_image}'
