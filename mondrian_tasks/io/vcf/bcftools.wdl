@@ -137,29 +137,51 @@ task MpileupAndCall{
         File reference_fasta
         File reference_fasta_fai
         File regions_vcf
+        File regions_vcf_idx
+        String? region
         String? filename_prefix = 'finalize_vcf'
         String? singularity_image
         String? docker_image
         Int? memory_override
         Int? walltime_override
     }
+
+    Boolean defined_region = defined(region)
     command<<<
-        bcftools \
-        mpileup -Oz \
-        -f ~{reference_fasta} \
-        --regions-file ~{regions_vcf} \
-        ~{bam} \
-         -o chromosome_mpileup.vcf.gz
+
+        if [ ~{defined_region} ]; then
+            bcftools view -Oz ~{regions_vcf} ~{region} > subset.vcf.gz
+        else
+            cp ~{regions_vcf} subset.vcf.gz
+        fi
+
+        numcalls=`zcat subset.vcf.gz  | grep -v "#" | wc -l`
+
+        if [ $numcalls == 0 ]; then
+            gunzip < subset.vcf.gz | head -n -1 > subset.vcf
+            echo -e "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\t~{bam}" >> subset.vcf
+            bgzip subset.vcf -f
+            cp subset.vcf.gz chromosome_mpileup.vcf.gz
+        else
+            bcftools \
+            mpileup -Oz \
+            -f ~{reference_fasta} \
+            --regions-file subset.vcf.gz \
+            ~{bam} \
+             -o chromosome_mpileup.vcf.gz
+        fi
 
         bcftools call -Oz \
         -c chromosome_mpileup.vcf.gz \
         -o chromosome_calls.vcf.gz
-        bcftools index chromosome_calls.vcf.gz
 
+        echo $(basename ~{bam}) >> samples
+        bcftools reheader --samples samples chromosome_calls.vcf.gz > chromosome_calls_reheader.vcf.gz
+        bcftools index chromosome_calls_reheader.vcf.gz
     >>>
     output{
-        File vcf_output = "chromosome_calls.vcf.gz"
-        File vcf_idx_output = "chromosome_calls.vcf.gz.csi"
+        File vcf_output = "chromosome_calls_reheader.vcf.gz"
+        File vcf_idx_output = "chromosome_calls_reheader.vcf.gz.csi"
     }
     runtime{
         memory: "~{select_first([memory_override, 14])} GB"
