@@ -20,3 +20,10 @@ struct BreakpointRefdata{
     File? blacklist_bed
 }
 
+
+struct Sample{
+    String sample_id
+    File tumour
+    File tumour_bai
+    File metadata_input
+}
