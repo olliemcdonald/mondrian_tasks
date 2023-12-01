@@ -52,6 +52,7 @@ task AlignPostprocessAllLanes{
         --metadata_yaml ~{metadata_yaml} \
         --reference ~{reference.reference} \
         --reference_name ~{reference.genome_name} \
+        --reference_version ~{reference.genome_version} \
         --supplementary_references_json ~{write_json(supplementary_references)} \
         --tempdir tempdir \
         --adapter1 ~{adapter1} \

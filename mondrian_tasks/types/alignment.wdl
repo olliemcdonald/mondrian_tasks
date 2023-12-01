@@ -2,6 +2,7 @@ version 1.0
 
 struct Reference{
     String genome_name
+    String genome_version
     File reference
     File reference_fa_fai
     File? reference_fa_alt
