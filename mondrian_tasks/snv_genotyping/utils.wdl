@@ -21,7 +21,7 @@ task Genotyper{
     command<<<
         if [[ ~{num_threads} -eq 1 ]]
         then
-            snv_genotyping_utils snv_genotyper --bam ~{bam}  ~{"--cell_barcodes "+cell_barcodes} \
+            snv_genotyping_utils snv-genotyper --bam ~{bam}  ~{"--cell_barcodes "+cell_barcodes} \
             --targets_vcf ~{vcf_file} --output ~{filename_prefix}.csv.gz \
             ~{true='--ignore_untagged_reads' false='' ignore_untagged_reads} \
             ~{'--interval' + interval} \
@@ -29,10 +29,10 @@ task Genotyper{
             ~{true='--sparse' false='' sparse}
         else
             mkdir outdir
-            intervals=`variant_utils split_interval --interval ~{interval} --num_splits ~{num_threads}`
+            intervals=`variant_utils split-interval --interval ~{interval} --num_splits ~{num_threads}`
             for interval in ${intervals}
                 do
-                    echo "snv_genotyping_utils snv_genotyper \
+                    echo "snv_genotyping_utils snv-genotyper \
                     ~{'--interval' + interval}  --bam ~{bam}  ~{"--cell_barcodes "+cell_barcodes} \
                     ~{true='--ignore_untagged_reads' false='' ignore_untagged_reads} \
                     ~{true='--skip_header' false='' skip_header} \
@@ -76,7 +76,7 @@ task SnvGenotypingMetadata{
         Int? walltime_override
     }
     command<<<
-        snv_genotyping_utils generate_metadata \
+        snv_genotyping_utils generate-metadata \
         --outputs ~{output_csv} ~{output_csv_yaml} \
         --vartrix_outputs ~{vartrix_output_csv} ~{vartrix_output_csv_yaml} \
         ~{vartrix_barcodes} ~{vartrix_variants} ~{vartrix_ref_matrix} ~{vartrix_alt_matrix} \
@@ -106,7 +106,7 @@ task GenerateCellBarcodes{
         Int? walltime_override
     }
     command<<<
-        snv_genotyping_utils generate_cell_barcodes --bam ~{bamfile} --output barcodes.txt
+        snv_genotyping_utils generate-cell-barcodes --bamfile ~{bamfile} --output barcodes.txt
     >>>
     output{
         File cell_barcodes = "barcodes.txt"
@@ -150,7 +150,7 @@ task RunVartrix{
         --primary-alignments \
         --threads ~{num_threads}
 
-        snv_genotyping_utils parse_vartrix \
+        snv_genotyping_utils parse-vartrix \
         --barcode out_snv_barcodes.txt \
         --variant out_snv_variants.txt \
         --ref_matrix out_snv_ref.mtx \
@@ -191,7 +191,7 @@ task MergeVartrix{
         Int? walltime_override
     }
     command<<<
-        snv_genotyping_utils merge_vartrix \
+        snv_genotyping_utils merge-vartrix \
         --barcodes ~{sep=" " barcodes} \
         --variants ~{sep=" " variants} \
         --ref_matrices ~{sep=" " ref_matrix} \
@@ -225,7 +225,7 @@ task RegenerateVartrixOutputs{
         Int? walltime_override
     }
     command<<<
-        snv_genotyping_utils regenerate_vartrix_format \
+        snv_genotyping_utils regenerate-vartrix-format \
         --barcodes ~{filename_prefix}_barcodes.txt \
         --variants ~{filename_prefix}_variants.txt \
         --ref_matrix ~{filename_prefix}_ref_counts.mtx \

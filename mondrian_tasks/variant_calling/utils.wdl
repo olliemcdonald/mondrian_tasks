@@ -11,10 +11,19 @@ task VariantMetadata{
         Int? walltime_override
     }
     command<<<
-        variant_utils generate_metadata \
+        meta="~{sep=' --metadata_yaml_files 'metadata_yaml_files}"
+        if [ ${meta} ]; then
+            meta="--metadata_yaml_files ${meta}"
+        fi
+
+        samps="~{sep=' --samples 'samples}"
+        if [ ${samps} ]; then
+            samps="--samples ${samps}"
+        fi
+
+        variant_utils generate-metadata \
         --files ~{write_json(files)} \
-        --metadata_yaml_files ~{sep=" "metadata_yaml_files} \
-        --samples ~{sep=" "samples} \
+        ${meta} ${samps} \
         --metadata_output metadata.yaml
     >>>
     output{
@@ -40,8 +49,8 @@ task MergeBams{
         Int? walltime_override
     }
     command<<<
-        variant_utils merge_bams \
-        --inputs ~{sep=" "inputs} \
+        variant_utils merge-bams \
+        --inputs ~{sep=" --inputs "inputs} \
         --output merged.bam \
         --tempdir temp \
         --threads ~{num_threads}

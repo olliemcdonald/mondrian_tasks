@@ -11,7 +11,7 @@ task GenerateIntervals{
         Int? walltime_override
     }
     command<<<
-        variant_utils generate_intervals --reference ~{reference} --chromosomes ~{sep=" "  chromosomes} --size ~{interval_size} > intervals.txt
+        variant_utils generate-intervals --reference ~{reference} --chromosomes ~{sep=" "  chromosomes} --size ~{interval_size} > intervals.txt
     >>>
     output{
         Array[String] intervals = read_lines('intervals.txt')

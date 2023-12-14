@@ -22,7 +22,7 @@ task BwaMemPaired{
         Int? walltime_override
     }
     command {
-        alignment_utils bwa_align --metadata_yaml ~{metadata_yaml} \
+        alignment_utils bwa-align --metadata_yaml ~{metadata_yaml} \
         --fastq1 ~{fastq1} --fastq2 ~{fastq2}  --reference ~{reference} \
         --output aligned.bam --cell_id ~{cell_id} --lane_id ~{lane_id} \
         --flowcell_id ~{flowcell_id}

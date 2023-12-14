@@ -14,7 +14,7 @@ task SvGenotyper{
         Int? walltime_override
     }
     command<<<
-        sv_genotyping_utils sv_genotyper --bam ~{bam} \
+        sv_genotyping_utils sv-genotyper --bam ~{bam} \
             --destruct_reads ~{destruct_reads} \
             --destruct_table ~{destruct_table} \
             --output ~{filename_prefix}.csv.gz
@@ -44,7 +44,7 @@ task SvGenotypingMetadata{
         Int? walltime_override
     }
     command<<<
-        sv_genotyping_utils generate_metadata \
+        sv_genotyping_utils generate-metadata \
         --outputs ~{output_csv} ~{output_csv_yaml} \
         --metadata_input ~{metadata_input} \
         --metadata_output metadata.yaml

@@ -105,7 +105,7 @@ task TrimGalore{
         Int? walltime_override
     }
     command <<<
-        alignment_utils trim_galore --r1 ~{r1} --r2 ~{r2} \
+        alignment_utils trim-galore --r1 ~{r1} --r2 ~{r2} \
         --output_r1 trimmed_r1.fastq.gz --output_r2 trimmed_r2.fastq.gz \
         --adapter1 ~{adapter1} --adapter2 ~{adapter2} --tempdir tempdir
     >>>
@@ -133,7 +133,7 @@ task TagBamWithCellid{
         Int? walltime_override
     }
     command <<<
-        alignment_utils tag_bam_with_cellid --infile ~{infile} --outfile outfile.bam --cell_id ~{cell_id}
+        alignment_utils tag-bam-with-cellid --infile ~{infile} --outfile outfile.bam --cell_id ~{cell_id}
     >>>
     output{
         File outfile = "outfile.bam"
@@ -164,8 +164,9 @@ task BamMerge{
         Int? walltime_override
     }
     command <<<
-        alignment_utils merge_cells --metrics ~{metrics}  --infile ~{sep=" "input_bams} --cell_id ~{sep=" "cell_ids} \
-        --tempdir temp --ncores ~{num_threads} --contaminated_outfile ~{filename_prefix}_contaminated.bam \
+        alignment_utils merge-cells --metrics ~{metrics}  --infiles ~{sep=" --infiles "input_bams} \
+        --cell_ids ~{sep=" --cell_ids "cell_ids} --tempdir temp --ncores ~{num_threads} \
+        --contaminated_outfile ~{filename_prefix}_contaminated.bam \
         --control_outfile ~{filename_prefix}_control.bam \
         --pass_outfile ~{filename_prefix}.bam \
         --reference ~{reference}
@@ -202,7 +203,7 @@ task AddContaminationStatus{
         Int? walltime_override
     }
     command<<<
-        alignment_utils add_contamination_status --infile ~{input_csv} --outfile output.csv.gz \
+        alignment_utils add-contamination-status --infile ~{input_csv} --outfile output.csv.gz \
         --reference ~{reference_genome}
     >>>
     output{
@@ -230,7 +231,7 @@ task ClassifyFastqscreen{
         Int? walltime_override
     }
     command<<<
-        alignment_utils classify_fastqscreen --training_data ~{training_data} --metrics ~{metrics} --output ~{filename_prefix}.csv.gz
+        alignment_utils classify-fastqscreen --training_data ~{training_data} --metrics ~{metrics} --output ~{filename_prefix}.csv.gz
     >>>
     output{
         File output_csv = "~{filename_prefix}.csv.gz"
@@ -267,7 +268,7 @@ task AlignmentMetadata{
         Int? walltime_override
     }
     command<<<
-        alignment_utils generate_metadata \
+        alignment_utils generate-metadata \
         --bam ~{bam} ~{bai} \
         --control ~{control_bam} ~{control_bai} \
         --contaminated ~{contaminated_bam} ~{contaminated_bai} \
@@ -313,7 +314,7 @@ task InputValidation{
         Int? walltime_override
     }
     command <<<
-        alignment_utils input_validation --meta_yaml ~{metadata_yaml} --input_data_json ~{write_json(input_data)} \
+        alignment_utils input-validation --meta_yaml ~{metadata_yaml} --input_data_json ~{write_json(input_data)} \
         && cp ~{metadata_yaml} metadata.yaml
     >>>
     # this is just to force run this task first

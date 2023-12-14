@@ -11,10 +11,20 @@ task BreakpointMetadata{
         Int? walltime_override
     }
     command<<<
-        breakpoint_utils generate_metadata \
+
+        meta="~{sep=' --metadata_yaml_files 'metadata_yaml_files}"
+        if [ ${meta} ]; then
+            meta="--metadata_yaml_files ${meta}"
+        fi
+
+        samps="~{sep=' --samples 'samples}"
+        if [ ${samps} ]; then
+            samps="--samples ${samps}"
+        fi
+
+        breakpoint_utils breakpoint-generate-metadata \
         --files ~{write_json(files)} \
-        --metadata_yaml_files ~{sep=" "metadata_yaml_files} \
-        --samples ~{sep=" "samples} \
+        ${meta} ${samps} \
         --metadata_output metadata.yaml
     >>>
     output{

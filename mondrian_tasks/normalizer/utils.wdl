@@ -17,7 +17,7 @@ task IdentifyNormalCells{
         Int? walltime_override
     }
     command<<<
-        normalizer_utils identify_normal_cells \
+        normalizer_utils identify-normal-cells \
         --reads_data ~{hmmcopy_reads} \
         --metrics_data ~{hmmcopy_metrics} \
         --output_yaml ~{filename_prefix}_normals.yaml \
@@ -53,7 +53,7 @@ task SeparateNormalAndTumourBams{
         Int? walltime_override
     }
     command<<<
-        normalizer_utils separate_normal_and_tumour_cells \
+        normalizer_utils separate-normal-and-tumour-cells \
         --infile ~{bam} \
         --normal_cells_yaml ~{normal_cells_yaml} \
         --normal_output ~{filename_prefix}_normal.bam \
@@ -91,7 +91,7 @@ task AneuploidyHeatmap{
         Int? walltime_override
     }
     command<<<
-        normalizer_utils aneuploidy_heatmap \
+        normalizer_utils aneuploidy-heatmap \
         --metrics ~{metrics} \
         --reads ~{reads} \
         --output ~{filename_prefix}.pdf \
@@ -127,7 +127,7 @@ task SeparateTumourAndNormalMetadata{
     String normal_bam_arg = if defined(normal_bam) then "--normal_bam ~{normal_bam} ~{normal_bai}" else ""
     String tumour_bam_arg = if defined(normal_bam) then "--tumour_bam ~{tumour_bam} ~{tumour_bai}" else ""
     command<<<
-        normalizer_utils separate_tumour_and_normal_metadata \
+        normalizer_utils separate-tumour-and-normal-metadata \
         --metadata_output metadata.yaml \
         --metadata_input ~{metadata_input} \
         --heatmap ~{sep=" "heatmap} \

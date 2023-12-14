@@ -27,7 +27,7 @@ task RunMuseq{
             if [ $? -ne 0 ]; then exit 1; fi
         else
             mkdir museq_vcf museq_log
-            intervals=`variant_utils split_interval --interval ~{interval} --num_splits ~{num_threads}`
+            intervals=`variant_utils split-interval --interval ~{interval} --num_splits ~{num_threads}`
             for interval in $intervals
                 do
                     echo "museq normal:~{normal_bam} tumour:~{tumour_bam} reference:~{reference} \
@@ -35,10 +35,10 @@ task RunMuseq{
                 done
             parallel --jobs ~{num_threads} < museq_commands.txt
             if [ $? -ne 0 ]; then exit 1; fi
-            variant_utils merge_vcf_files --inputs museq_vcf/*vcf --output merged.vcf
+            variant_utils merge-vcf-files --inputs museq_vcf/*vcf --output merged.vcf
         fi
 
-        variant_utils fix_museq_vcf --input merged.vcf --output merged.fixed.vcf
+        variant_utils fix-museq-vcf --input merged.vcf --output merged.fixed.vcf
         vcf-sort merged.fixed.vcf > merged.sorted.fixed.vcf
         bgzip merged.sorted.fixed.vcf -c > merged.sorted.fixed.vcf.gz
         bcftools index merged.sorted.fixed.vcf.gz
@@ -73,7 +73,7 @@ task FixMuseqVcf{
 
     }
     command<<<
-        variant_utils fix_museq_vcf --input ~{vcf_file} --output output.vcf
+        variant_utils fix-museq-vcf --input ~{vcf_file} --output output.vcf
         bgzip output.vcf -c > output.vcf.gz
         bcftools index output.vcf.gz
         tabix -f -p vcf output.vcf.gz

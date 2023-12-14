@@ -80,7 +80,7 @@ task RunMutect{
             mv raw_data/~{interval}.vcf merged.vcf
             mv raw_data/~{interval}.vcf.stats merged.stats
         else
-            intervals=`variant_utils split_interval --interval ~{interval} --num_splits ~{num_threads}`
+            intervals=`variant_utils split-interval --interval ~{interval} --num_splits ~{num_threads}`
             echo $intervals
             for interval in $intervals
                 do
@@ -93,14 +93,14 @@ task RunMutect{
                     -R ~{reference} -O raw_data/${interval}.vcf.gz  --intervals ${interval} ">> commands.txt
                 done
             parallel --jobs ~{num_threads} < commands.txt
-            variant_utils merge_vcf_files --inputs raw_data/*vcf.gz --output merged.vcf
+            variant_utils merge-vcf-files --inputs raw_data/*vcf.gz --output merged.vcf
             inputs=`ls raw_data/*stats | awk 'ORS=" -stats "' | head -c -8`
             echo $inputs
             gatk --java-options "-Xmx4G" MergeMutectStats \
                 -stats $inputs -O merged.stats
         fi
 
-        variant_utils fix_museq_vcf --input merged.vcf --output merged.fixed.vcf
+        variant_utils fix-museq-vcf --input merged.vcf --output merged.fixed.vcf
         vcf-sort merged.fixed.vcf > merged.sorted.fixed.vcf
         bgzip merged.sorted.fixed.vcf -c > merged.sorted.fixed.vcf.gz
         tabix -f -p vcf merged.sorted.fixed.vcf.gz

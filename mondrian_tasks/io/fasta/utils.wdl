@@ -13,10 +13,10 @@ task GetRegions{
 
     }
     command<<<
-        reference_utils get_intervals \
+        reference_utils get-intervals \
         --reference ~{reference} \
         --output intervals.txt  \
-        --chromosomes ~{sep=" " chromosomes} \
+        --chromosomes ~{sep=" --chromosomes " chromosomes} \
         --interval_size ~{size}
     >>>
     output{

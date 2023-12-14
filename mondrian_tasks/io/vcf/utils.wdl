@@ -14,7 +14,7 @@ task VcfReheaderId{
         Int? walltime_override
     }
     command<<<
-        variant_utils vcf_reheader_id \
+        variant_utils vcf-reheader-id \
         --input ~{input_vcf} \
         --tumour ~{tumour_bam} \
         --normal ~{normal_bam} \
@@ -74,7 +74,7 @@ task SplitVcf{
         Int? walltime_override
     }
     command<<<
-        vcf_utils split_vcf --infile ~{input_vcf} --num_splits ~{num_splits} --outdir temp_output
+        io_utils split-vcf --infile ~{input_vcf} --num_splits ~{num_splits} --outdir temp_output
 
         ls temp_output|while read x; do bgzip temp_output/${x} && tabix temp_output/${x}.gz;done
     >>>
@@ -101,7 +101,7 @@ task SplitVcfByChrom{
         Int? walltime_override
     }
     command<<<
-        vcf_utils split_vcf_by_chrom --infile ~{input_vcf} --outdir temp_output
+        io_utils split-vcf-by-chrom --infile ~{input_vcf} --outdir temp_output
 
         ls temp_output|while read x; do bgzip temp_output/${x} && tabix temp_output/${x}.gz;done
     >>>
@@ -129,7 +129,7 @@ task RemoveDuplicates{
         Int? walltime_override
     }
     command<<<
-        vcf_utils remove_duplicates --infile ~{input_vcf} --outfile unique_calls.vcf \
+        io_utils remove-duplicates --infile ~{input_vcf} --outfile unique_calls.vcf \
         ~{true='--include_ref_alt' false='' include_ref_alt}
         bgzip unique_calls.vcf
         tabix unique_calls.vcf.gz
@@ -157,7 +157,7 @@ task ExcludeBlacklistCalls{
         Int? walltime_override
     }
     command<<<
-        vcf_utils exclude_blacklist --infile ~{input_vcf} --outfile whitelist_calls.vcf \
+        io_utils exclude-blacklist --infile ~{input_vcf} --outfile whitelist_calls.vcf \
         --exclusion_blacklist ~{exclusion_blacklist}
         bgzip whitelist_calls.vcf
         tabix whitelist_calls.vcf.gz
@@ -186,7 +186,7 @@ task MergeVcfs{
         Int? walltime_override
     }
     command<<<
-        vcf_utils merge_vcfs --infiles ~{sep=" "input_vcf}  --outfile output.vcf
+        io_utils merge-vcfs --infiles ~{sep=" --infiles "input_vcf}  --outfile output.vcf
         bgzip output.vcf
         tabix output.vcf.gz
     >>>

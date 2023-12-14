@@ -19,10 +19,10 @@ task Consensus{
     String blacklist_str = if defined(blacklist_bed) then '--blacklist_bed ~{blacklist_bed}' else ''
     command<<<
         mkdir tempdir
-        breakpoint_utils consensus \
+        breakpoint_utils breakpoint-consensus \
         --destruct ~{destruct} \
         --lumpy ~{lumpy} --svaba ~{svaba} \
-        --gridss ~{gridss} --consensus ~{filename_prefix}_consensus.csv.gz --sample_id ~{sample_id} \
+        --gridss ~{gridss} --consensus_output ~{filename_prefix}_consensus.csv.gz --sample_id ~{sample_id} \
         --tempdir tempdir \
         ~{region_str} \
         ~{blacklist_str}

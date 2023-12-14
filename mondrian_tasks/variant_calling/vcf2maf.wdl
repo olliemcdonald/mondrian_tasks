@@ -54,7 +54,7 @@ task UpdateMafId{
         Int? walltime_override
     }
     command<<<
-        variant_utils update_maf_ids --input ~{input_maf} --tumour_bam ~{tumour_bam} --normal_bam ~{normal_bam} --output updated_id.maf
+        variant_utils update-maf-ids --input ~{input_maf} --tumour_bam ~{tumour_bam} --normal_bam ~{normal_bam} --output updated_id.maf
     >>>
     output{
         File output_maf = 'updated_id.maf'
@@ -80,7 +80,7 @@ task UpdateMafCounts{
 
     }
     command<<<
-        variant_utils update_maf_counts --input ~{input_maf} --counts ~{input_counts} --output ~{filename_prefix}_updated_counts.maf
+        variant_utils update-maf-counts --input ~{input_maf} --counts ~{input_counts} --output ~{filename_prefix}_updated_counts.maf
     >>>
     output{
         File output_maf = filename_prefix + '_updated_counts.maf'
@@ -105,7 +105,7 @@ task MergeMafs{
         Int? walltime_override
     }
     command<<<
-        variant_utils merge_mafs --infiles ~{sep=" "input_mafs} --output ~{filename_prefix}.maf
+        variant_utils merge-mafs --infiles ~{sep=" "input_mafs} --output ~{filename_prefix}.maf
     >>>
     output{
         File output_maf = "~{filename_prefix}.maf"

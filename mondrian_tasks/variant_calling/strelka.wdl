@@ -13,7 +13,7 @@ task GetGenomeSize{
 
     }
     command<<<
-        variant_utils genome_size --reference ~{reference} --chromosomes ~{sep=" "  chromosomes} > genome_size.txt
+        variant_utils genome-size --reference ~{reference} --chromosomes ~{sep=" "  chromosomes} > genome_size.txt
     >>>
     output{
         String genome_size = read_string('genome_size.txt')
@@ -48,7 +48,7 @@ task GenerateChromDepth{
             do
                 GetChromDepth --align-file ~{normal_bam} --chrom ${interval} --output-file raw_data/${interval}.chrom_depth.txt
             done
-        variant_utils merge_chromosome_depths_strelka --inputs raw_data/* --output chrom_depth.txt
+        variant_utils merge-chromosome-depths-strelka --inputs raw_data/* --output chrom_depth.txt
 
     >>>
     output{
@@ -130,7 +130,7 @@ task RunStrelka{
             --strelka-chrom-depth-file ~{chrom_depth_file} \
             --strelka-max-depth-factor ~{depth_filter_multiple}
         else
-            intervals=`variant_utils split_interval --interval ~{interval} --num_splits ~{num_threads}`
+            intervals=`variant_utils split-interval --interval ~{interval} --num_splits ~{num_threads}`
             echo $intervals
             for interval in $intervals
                 do
@@ -159,17 +159,17 @@ task RunStrelka{
                     --strelka-max-depth-factor ~{depth_filter_multiple}" >> commands.txt
                 done
             parallel --jobs ~{num_threads} < commands.txt
-            variant_utils merge_vcf_files --inputs *.snv.vcf --output merged_snv.vcf
-            variant_utils merge_vcf_files --inputs *.indels.vcf --output merged_indels.vcf
+            variant_utils merge-vcf-files --inputs *.snv.vcf --output merged_snv.vcf
+            variant_utils merge-vcf-files --inputs *.indels.vcf --output merged_indels.vcf
         fi
 
-            variant_utils fix_museq_vcf --input merged_snv.vcf --output merged_snv.fixed.vcf
+            variant_utils fix-museq-vcf --input merged_snv.vcf --output merged_snv.fixed.vcf
             vcf-sort merged_snv.fixed.vcf > merged_snv.sorted.fixed.vcf
             bgzip merged_snv.sorted.fixed.vcf -c > merged_snv.sorted.fixed.vcf.gz
             bcftools index merged_snv.sorted.fixed.vcf.gz
             tabix -f -p vcf merged_snv.sorted.fixed.vcf.gz
 
-            variant_utils fix_museq_vcf --input merged_indels.vcf --output merged_indels.fixed.vcf
+            variant_utils fix-museq-vcf --input merged_indels.vcf --output merged_indels.fixed.vcf
             vcf-sort merged_indels.fixed.vcf > merged_indels.sorted.fixed.vcf
             bgzip merged_indels.sorted.fixed.vcf -c > merged_indels.sorted.fixed.vcf.gz
             bcftools index merged_indels.sorted.fixed.vcf.gz

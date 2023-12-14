@@ -19,7 +19,7 @@ task VariantBam{
             variant ~{input_bam} -m ~{max_coverage} -k ~{interval} -v -b -o output.bam
         else
             mkdir variant_bam
-            split_intervals=`variant_utils split_interval --interval ~{interval} --num_splits ~{num_threads}`
+            split_intervals=`variant_utils split-interval --interval ~{interval} --num_splits ~{num_threads}`
             for splitinterval in $split_intervals
                 do
                     echo "variant ~{input_bam} -m ~{max_coverage} -k $splitinterval -v -b -o variant_bam/$splitinterval.bam" >> variant_commands.txt

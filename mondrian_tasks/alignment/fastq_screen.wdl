@@ -67,9 +67,9 @@ task MergeFastqscreenCounts{
         Int? walltime_override
     }
     command<<<
-        alignment_utils merge_fastqscreen_counts \
-        --detailed_counts ~{sep=" "detailed_counts} \
-        --summary_counts ~{sep=" "summary_counts} \
+        alignment_utils merge-fastqscreen-counts \
+        --detailed_counts ~{sep=" --detailed_counts "detailed_counts} \
+        --summary_counts ~{sep=" --summary_counts "summary_counts} \
         --merged_detailed detailed.csv.gz \
         --merged_summary summary.csv.gz
     >>>

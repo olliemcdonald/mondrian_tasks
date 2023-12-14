@@ -12,7 +12,7 @@ task SplitBam{
         Int? walltime_override
     }
     command<<<
-        bam_utils split_bam_by_barcode --infile ~{bam} --outdir outdir --tempdir tempdir --chromosomes ~{sep=" "chromosomes} --ncores ~{num_threads}
+        io_utils split-bam-by-barcode --infile ~{bam} --outdir outdir --tempdir tempdir --chromosomes ~{sep=" "chromosomes} --ncores ~{num_threads}
     >>>
     output{
         Array[File] cell_bams = glob('outdir/*bam')
@@ -41,14 +41,14 @@ task OverlappingFractionPerBin{
         Int? walltime_override
     }
     command<<<
-        bam_utils overlapping_fraction_per_bin \
+        io_utils overlapping-fraction-per-bin \
          --bam ~{bamfile} \
          --output reads_with_overlapping_fraction.csv.gz \
          --tempdir tempdir \
-         --chromosomes ~{sep=" "chromosomes} \
+         --chromosomes ~{sep=" --chromosomes "chromosomes} \
          --binsize ~{binsize} \
          --mapping_quality ~{mapping_quality} \
-         --ncores ~{num_threads} \
+         --ncores ~{num_threads}
     >>>
     output{
         File output_csv = 'reads_with_overlapping_fraction.csv.gz'

@@ -14,7 +14,7 @@ task RunReadCounter{
         Int? walltime_override
     }
     command<<<
-        hmmcopy_utils readcounter --infile ~{bamfile} --outdir output -w 500000 --chromosomes ~{sep=" "chromosomes} \
+        hmmcopy_utils readcounter --infile ~{bamfile} --outdir output -w 500000 --chromosomes ~{sep=" --chromosomes "chromosomes} \
         -m 20 --exclude_list ~{repeats_satellite_regions} --tempdir all_cells_temp --ncores ~{num_threads}
     >>>
     output{
@@ -44,7 +44,7 @@ task Hmmcopy{
         Int? walltime_override
     }
     command<<<
-        hmmcopy_utils hmmcopy \
+        hmmcopy_utils run-hmmcopy \
         --readcount_wig ~{readcount_wig} \
         --gc_wig_file ~{gc_wig} \
         --map_wig_file ~{map_wig} \
@@ -100,7 +100,7 @@ task PlotHeatmap{
     }
     command<<<
         hmmcopy_utils heatmap --reads ~{reads} --metrics ~{metrics} \
-        --output ~{filename_prefix}.pdf --chromosomes ~{sep=" "chromosomes} \
+        --output ~{filename_prefix}.pdf --chromosomes ~{sep=" --chromosomes "chromosomes} \
         --sidebar_column ~{sidebar_column} \
         ~{true='--disable_clustering' false='' disable_clustering}
      >>>
@@ -128,7 +128,7 @@ task AddMappability{
         Int? walltime_override
     }
     command<<<
-    hmmcopy_utils add_mappability --infile ~{infile} --outfile ~{filename_prefix}.csv.gz
+    hmmcopy_utils add-mappability --infile ~{infile} --outfile ~{filename_prefix}.csv.gz
     >>>
     output{
         File outfile = '~{filename_prefix}.csv.gz'
@@ -193,7 +193,7 @@ task AddQuality{
         Int? walltime_override
     }
     command<<<
-    hmmcopy_utils add_quality --hmmcopy_metrics ~{hmmcopy_metrics} --alignment_metrics ~{alignment_metrics} --training_data ~{classifier_training_data} --output ~{filename_prefix}.csv.gz --tempdir temp
+    hmmcopy_utils add-quality --hmmcopy_metrics ~{hmmcopy_metrics} --alignment_metrics ~{alignment_metrics} --training_data ~{classifier_training_data} --output ~{filename_prefix}.csv.gz --tempdir temp
     >>>
     output{
         File outfile = "~{filename_prefix}.csv.gz"
@@ -222,7 +222,7 @@ task CreateSegmentsTar{
 
     }
     command<<<
-    hmmcopy_utils create_segs_tar --segs_pdf ~{sep = " " segments_plot} \
+    hmmcopy_utils create-segs-tar --segs_pdf ~{sep = " --segs_pdf " segments_plot} \
     --metrics ~{hmmcopy_metrics} --pass_output ~{filename_prefix}_pass.tar.gz \
     --fail_output ~{filename_prefix}_fail.tar.gz --tempdir temp
     >>>
@@ -254,7 +254,7 @@ task GenerateHtmlReport{
         Int? walltime_override
     }
     command<<<
-    hmmcopy_utils generate_html_report \
+    hmmcopy_utils generate-html-report \
      --tempdir temp --html ~{filename_prefix}_report.html \
      --metrics ~{metrics} \
      --gc_metrics ~{gc_metrics}
@@ -286,9 +286,9 @@ task AddClusteringOrder{
         Int? walltime_override
     }
     command<<<
-    hmmcopy_utils add_clustering_order \
+    hmmcopy_utils add-clustering-order \
      --reads ~{reads} --output ~{filename_prefix}.csv.gz \
-     --metrics ~{metrics} --chromosomes ~{sep=" "chromosomes}
+     --metrics ~{metrics} --chromosomes ~{sep=" --chromosomes "chromosomes}
     >>>
     output{
         File output_csv = "~{filename_prefix}.csv.gz"
@@ -324,7 +324,7 @@ task HmmcopyMetadata{
         Int? walltime_override
     }
     command<<<
-        hmmcopy_utils generate_metadata \
+        hmmcopy_utils generate-metadata \
         --params ~{params} ~{params_yaml} \
         --segments ~{segments} ~{segments_yaml} \
         --metrics ~{metrics} ~{metrics_yaml} \

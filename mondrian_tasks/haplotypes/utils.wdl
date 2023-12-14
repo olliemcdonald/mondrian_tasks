@@ -24,14 +24,14 @@ task ExtractSeqDataAndReadCount{
 
         mkdir -p readcount_temp seqdata_temp
 
-        haplotype_utils extract_seqdata --bam ~{bam} \
+        haplotype_utils extract-seqdata --bam ~{bam} \
         --snp_positions ~{snp_positions} \
         --output seqdata_temp/output.h5 \
         --tempdir seqdata_temp \
-        --chromosomes ~{sep=" "chromosomes} \
+        --chromosomes ~{sep=" --chromosomes"chromosomes} \
         --cell_id $cellid
 
-        haplotype_utils haplotype_allele_readcount \
+        haplotype_utils haplotype-allele-readcount \
         --seqdata seqdata_temp/output.h5 \
         --segments ~{segments} \
         --haplotypes ~{haplotypes} \
@@ -66,7 +66,7 @@ task GetAlleleCounts{
         Int? walltime_override
     }
     command<<<
-        haplotype_utils get_allele_counts --bam ~{bam} \
+        haplotype_utils get-allele-counts --bam ~{bam} \
         --snp_positions ~{snp_positions} \
         --output counts.csv.gz \
         --region ~{region} \
@@ -98,7 +98,7 @@ task InferSnpGenotype{
         Int? walltime_override
     }
     command<<<
-    haplotype_utils infer_snp_genotype \
+    haplotype_utils infer-snp-genotype \
     --allele_counts ~{allele_counts} \
     --output snp_genotype.csv.gz \
     --chromosome  ~{chromosome} \
@@ -133,7 +133,7 @@ task InferHaps{
         Int? walltime_override
     }
     command<<<
-        haplotype_utils infer_haps \
+        haplotype_utils infer-haps \
         --snp_genotype ~{snp_genotype} \
         --thousand_genomes_tar ~{thousand_genomes_tar} \
         --output haplotypes.tsv \
@@ -164,7 +164,7 @@ task MergeSeqData{
         Int? walltime_override
     }
     command<<<
-        haplotype_utils merge_seqdata --inputs ~{sep=" "infiles} --output output.h5
+        haplotype_utils merge-seqdata --inputs ~{sep=" "infiles} --output output.h5
     >>>
     output{
         File merged_haps = "output.h5"
@@ -189,7 +189,7 @@ task MergeHaps{
         Int? walltime_override
     }
     command<<<
-        haplotype_utils merge_haps --inputs ~{sep=" "infiles} --output output.tsv
+        haplotype_utils merge-haps --inputs ~{sep=" "infiles} --output output.tsv
     >>>
     output{
         File merged_haps = "output.tsv"
@@ -215,7 +215,7 @@ task AnnotateHaps{
         Int? walltime_override
     }
     command<<<
-        haplotype_utils annotate_haps --input ~{infile} \
+        haplotype_utils annotate-haps --input ~{infile} \
         --thousand_genomes ~{thousand_genomes_snps} \
         --output ~{filename_prefix}.csv.gz --tempdir tmpdir
     >>>
@@ -245,7 +245,7 @@ task CreateSegments{
         Int? walltime_override
     }
     command<<<
-        haplotype_utils create_segments \
+        haplotype_utils create-segments \
         --reference_fai ~{reference_fai} \
         --gap_table ~{gap_table} \
         --chromosomes ~{sep=" "chromosomes} \
@@ -274,7 +274,7 @@ task ConvertHaplotypesCsvToTsv{
         Int? walltime_override
     }
     command<<<
-        haplotype_utils convert_haplotypes_csv_to_tsv \
+        haplotype_utils convert-haplotypes-csv-to-tsv \
         --input ~{infile} \
         --output output.tsv
     >>>
@@ -304,7 +304,7 @@ task HaplotypesMetadata{
         Int? walltime_override
     }
     command<<<
-        haplotype_utils generate_metadata \
+        haplotype_utils generate-metadata \
         --files ~{write_json(files)} \
         --metadata_yaml_files ~{sep=" "metadata_yaml_files} \
         --samples ~{sep=" "samples} \
@@ -345,14 +345,14 @@ task shapeit4{
         Int? walltime_override
     }
     command<<<
-        haplotype_utils run_shapeit \
+        haplotype_utils run-shapeit \
         --input_bcf_file ~{bcf_input} \
         --genetic_map ~{genetic_map} \
         --regions_file ~{regions_file} \
         --chromosome ~{chromosome} \
         --tempdir tempdir \
         --output haplotypes.tsv.gz \
-        --phased_chromosomes ~{sep=" " phased_chromosomes} \
+        --phased_chromosomes ~{sep=" --phased_chromosomes " phased_chromosomes} \
         --phased_chromosome_x ~{phased_chromosome_x} \
         --shapeit_num_samples ~{shapeit_num_samples} \
         --shapeit_confidence_threshold ~{shapeit_confidence_threshold} \

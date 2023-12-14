@@ -11,7 +11,7 @@ task RewriteCsv{
         Int? walltime_override
     }
     command<<<
-        csverve_utils rewrite_csv --infile ~{infile} --outfile outfile.csv.gz --dtypes ~{dtypes}
+        io_utils rewrite-csv --infile ~{infile} --outfile outfile.csv.gz --dtypes ~{dtypes}
     >>>
     output{
         File outfile = 'outfile.csv.gz'
@@ -124,7 +124,7 @@ task FinalizeCsv {
         Int? walltime_override
     }
     command {
-        variant_utils concat_csv  --inputs ~{sep=" " inputfile} --output concat.csv
+        variant_utils concat-csv  --inputs ~{sep=" " inputfile} --output concat.csv
 
     }
     output {

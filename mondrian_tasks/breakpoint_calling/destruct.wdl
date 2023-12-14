@@ -91,7 +91,7 @@ task ExtractCounts{
         Int? walltime_override
     }
     command<<<
-        breakpoint_utils destruct_extract_cell_counts  \
+        breakpoint_utils breakpoint-destruct-extract-cell-counts  \
         --reads ~{destruct_reads} \
         --output ~{filename_prefix}_destruct_cell_counts.csv.gz \
     >>>
@@ -120,7 +120,7 @@ task DestructCsvToVcf{
         Int? walltime_override
     }
     command<<<
-        breakpoint_utils destruct_csv_to_vcf \
+        breakpoint_utils breakpoint-destruct-csv-to-vcf \
         --infile ~{destruct_csv} \
         --reference ~{reference_fasta} \
         --outfile destruct.vcf \

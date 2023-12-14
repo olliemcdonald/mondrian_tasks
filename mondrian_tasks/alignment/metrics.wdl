@@ -15,7 +15,7 @@ task CollectMetrics{
         Int? walltime_override
     }
     command<<<
-        alignment_utils collect_metrics \
+        alignment_utils collect-metrics \
         --wgs_metrics ~{wgs_metrics} \
         --insert_metrics ~{insert_metrics} \
         --flagstat ~{flagstat} \
@@ -48,7 +48,7 @@ task CollectGcMetrics{
         Int? walltime_override
     }
     command<<<
-        alignment_utils collect_gc_metrics \
+        alignment_utils collect-gc-metrics \
         --infile ~{infile} \
         --cell_id ~{cell_id} \
         --outfile output.csv.gz
@@ -78,7 +78,7 @@ task CoverageMetrics{
         Int? walltime_override
     }
     command<<<
-    alignment_utils coverage_metrics --bamfile ~{bamfile} --output ~{filename_prefix}.csv.gz
+    alignment_utils coverage-metrics --bamfile ~{bamfile} --output ~{filename_prefix}.csv.gz
     >>>
     output{
         File output_csv = "~{filename_prefix}.csv.gz"
@@ -106,7 +106,7 @@ task AddMetadata{
         Int? walltime_override
     }
     command<<<
-    alignment_utils add_metadata --metrics ~{metrics} --metadata ~{metadata_yaml} --output ~{filename_prefix}.csv.gz
+    alignment_utils add-metadata --metrics ~{metrics} --metadata ~{metadata_yaml} --output ~{filename_prefix}.csv.gz
     >>>
     output{
         File output_csv = "~{filename_prefix}.csv.gz"
