@@ -30,6 +30,104 @@ task RunReadCounter{
 }
 
 
+task CellCycleClassifier{
+    input{
+        File hmmcopy_reads
+        File hmmcopy_reads_yaml
+        File hmmcopy_metrics
+        File hmmcopy_metrics_yaml
+        File alignment_metrics
+        File alignment_metrics_yaml
+        String? singularity_image
+        String? docker_image
+        Int? memory_override
+        Int? walltime_override
+    }
+    command<<<
+    hmmcopy_utils cell-cycle-classifier --reads ~{hmmcopy_reads} --alignment_metrics ~{alignment_metrics} \
+      --hmmcopy_metrics ~{hmmcopy_metrics} --output output.csv.gz --tempdir temp
+    >>>
+    output{
+        File outfile = 'output.csv.gz'
+        File outfile_yaml = 'output.csv.gz.yaml'
+    }
+    runtime{
+        memory: "~{select_first([memory_override, 7])} GB"
+        walltime: "~{select_first([walltime_override, 6])}:00"
+        cpu: 1
+        docker: '~{docker_image}'
+        singularity: '~{singularity_image}'
+    }
+
+}
+
+task CellHmmcopy{
+    input{
+        File bamfile
+        File baifile
+        File gc_wig
+        File map_wig
+        File reference
+        File reference_fai
+        File alignment_metrics
+        File alignment_metrics_yaml
+        File repeats_satellite_regions
+        Array[String] chromosomes
+        File quality_classifier_training_data
+        File? quality_classifier_model
+        String map_cutoff
+        String? singularity_image
+        String? docker_image
+        Int? memory_override
+        Int? walltime_override
+    }
+    String model_str = if defined(quality_classifier_model) then '--quality_classifier_model ~{quality_classifier_model}' else ''
+    command<<<
+        hmmcopy_utils run-cell-hmmcopy \
+        --bam_file ~{bamfile} \
+        --gc_wig_file ~{gc_wig} \
+        --map_wig_file ~{map_wig} \
+        --alignment_metrics ~{alignment_metrics} \
+        --chromosomes ~{sep=" --chromosomes "chromosomes} \
+        --metrics metrics.csv.gz \
+        --params params.csv.gz \
+        --reads reads.csv.gz \
+        --segments segments.csv.gz \
+        --output_tarball hmmcopy_data.tar.gz \
+        --exclude_list ~{repeats_satellite_regions} \
+        --reference ~{reference} \
+        --segments_output segments.pdf \
+        --bias_output bias.pdf \
+        --tempdir output \
+        --map_cutoff ~{map_cutoff} \
+        --quality_classifier_training_data ~{quality_classifier_training_data} \
+        ~{model_str}
+    >>>
+    output{
+        File reads = 'reads.csv.gz'
+        File reads_yaml = 'reads.csv.gz.yaml'
+        File params = 'params.csv.gz'
+        File params_yaml = 'params.csv.gz.yaml'
+        File segments = 'segments.csv.gz'
+        File segments_yaml = 'segments.csv.gz.yaml'
+        File metrics = 'metrics.csv.gz'
+        File metrics_yaml = 'metrics.csv.gz.yaml'
+        File tarball = 'hmmcopy_data.tar.gz'
+        File segments_pdf = 'segments.pdf'
+        File segments_sample = 'segments.pdf.sample'
+        File bias_pdf = 'bias.pdf'
+    }
+    runtime{
+        memory: "~{select_first([memory_override, 47])} GB"
+        walltime: "~{select_first([walltime_override, 6])}:00"
+        cpu: 1
+        docker: '~{docker_image}'
+        singularity: '~{singularity_image}'
+    }
+}
+
+
+
 task Hmmcopy{
     input{
         File readcount_wig
@@ -37,17 +135,23 @@ task Hmmcopy{
         File map_wig
         File reference
         File reference_fai
+        File alignment_metrics
+        File alignment_metrics_yaml
+        File quality_classifier_training_data
+        File? quality_classifier_model
         String map_cutoff
         String? singularity_image
         String? docker_image
         Int? memory_override
         Int? walltime_override
     }
+    String model_str = if defined(quality_classifier_model) then '--quality_classifier_model ~{quality_classifier_model}' else ''
     command<<<
         hmmcopy_utils run-hmmcopy \
         --readcount_wig ~{readcount_wig} \
         --gc_wig_file ~{gc_wig} \
         --map_wig_file ~{map_wig} \
+        --alignment_metrics ~{alignment_metrics} \
         --metrics metrics.csv.gz \
         --params params.csv.gz \
         --reads reads.csv.gz \
@@ -58,7 +162,9 @@ task Hmmcopy{
         --bias_output bias.pdf \
         --cell_id $(basename ~{readcount_wig} .wig) \
         --tempdir output \
-        --map_cutoff ~{map_cutoff}
+        --map_cutoff ~{map_cutoff} \
+        --quality_classifier_training_data ~{quality_classifier_training_data} \
+        ~{model_str}
     >>>
     output{
         File reads = 'reads.csv.gz'
@@ -117,96 +223,7 @@ task PlotHeatmap{
 }
 
 
-task AddMappability{
-    input{
-        File infile
-        File infile_yaml
-        String? filename_prefix = "mappabilitty"
-        String? singularity_image
-        String? docker_image
-        Int? memory_override
-        Int? walltime_override
-    }
-    command<<<
-    hmmcopy_utils add-mappability --infile ~{infile} --outfile ~{filename_prefix}.csv.gz
-    >>>
-    output{
-        File outfile = '~{filename_prefix}.csv.gz'
-        File outfile_yaml = '~{filename_prefix}.csv.gz.yaml'
-    }
-    runtime{
-        memory: "~{select_first([memory_override, 21])} GB"
-        walltime: "~{select_first([walltime_override, 6])}:00"
-        cpu: 1
-        docker: '~{docker_image}'
-        singularity: '~{singularity_image}'
-    }
 
-}
-
-
-task CellCycleClassifier{
-    input{
-        File hmmcopy_reads
-        File hmmcopy_metrics
-        File alignment_metrics
-        String? singularity_image
-        String? docker_image
-        Int? memory_override
-        Int? walltime_override
-    }
-    command<<<
-    cell_cycle_classifier train-classify ~{hmmcopy_reads} ~{hmmcopy_metrics} ~{alignment_metrics} output.csv.gz
-
-    echo "is_s_phase: bool" > dtypes.yaml
-    echo "is_s_phase_prob: float" >> dtypes.yaml
-    echo "cell_id: category" >> dtypes.yaml
-
-    csverve rewrite --in_f output.csv.gz --out_f rewrite.csv.gz --dtypes dtypes.yaml
-
-    >>>
-    output{
-        File outfile = 'rewrite.csv.gz'
-        File outfile_yaml = 'rewrite.csv.gz.yaml'
-    }
-    runtime{
-        memory: "~{select_first([memory_override, 7])} GB"
-        walltime: "~{select_first([walltime_override, 6])}:00"
-        cpu: 1
-        docker: '~{docker_image}'
-        singularity: '~{singularity_image}'
-    }
-
-}
-
-task AddQuality{
-    input{
-        File hmmcopy_metrics
-        File hmmcopy_metrics_yaml
-        File alignment_metrics
-        File alignment_metrics_yaml
-        File classifier_training_data
-        String? filename_prefix = "quality_classifier"
-        String? singularity_image
-        String? docker_image
-        Int? memory_override
-        Int? walltime_override
-    }
-    command<<<
-    hmmcopy_utils add-quality --hmmcopy_metrics ~{hmmcopy_metrics} --alignment_metrics ~{alignment_metrics} --training_data ~{classifier_training_data} --output ~{filename_prefix}.csv.gz --tempdir temp
-    >>>
-    output{
-        File outfile = "~{filename_prefix}.csv.gz"
-        File outfile_yaml = "~{filename_prefix}.csv.gz.yaml"
-    }
-    runtime{
-        memory: "~{select_first([memory_override, 7])} GB"
-        walltime: "~{select_first([walltime_override, 6])}:00"
-        cpu: 1
-        docker: '~{docker_image}'
-        singularity: '~{singularity_image}'
-    }
-}
 
 task CreateSegmentsTar{
     input{

@@ -6,6 +6,7 @@ struct HmmcopyRefdata{
     File gc_wig
     File map_wig
     File classifier_training_data
+    File? classifier_model
     File repeats_satellite_regions
 }
 

@@ -92,17 +92,18 @@ task MergeCsv{
         Array[File] inputyamls
         Array[String] on
         String how
+        String? filename_prefix = 'merge_csv'
         String? singularity_image
         String? docker_image
         Int? memory_override
         Int? walltime_override
     }
     command<<<
-        csverve merge --in_f ~{sep=" --in_f " inputfiles} --out_f merged.csv.gz --on ~{sep=" --on " on} --how ~{how}
+        csverve merge --in_f ~{sep=" --in_f " inputfiles} --out_f ~{filename_prefix}.csv.gz --on ~{sep=" --on " on} --how ~{how}
     >>>
     output{
-        File outfile = "merged.csv.gz"
-        File outfile_yaml = 'merged.csv.gz.yaml'
+        File outfile = "~{filename_prefix}.csv.gz"
+        File outfile_yaml = '~{filename_prefix}.csv.gz.yaml'
     }
     runtime{
         memory: "~{select_first([memory_override, 14])} GB"

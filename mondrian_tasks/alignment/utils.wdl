@@ -47,13 +47,15 @@ task AlignPostprocessAllLanes{
         Int? walltime_override
     }
     command {
+
+        supplementary=`python -c "import mondrianutils.alignment as utils;utils.supplementary_reference_cmdline('~{write_json(supplementary_references)}')"`
+        fastqs=`python -c "import mondrianutils.alignment as utils;utils.fastqs_cmdline('~{write_json(fastq_files)}')"`
+
         alignment_utils alignment \
-        --fastq_files ~{write_json(fastq_files)} \
+        $fastqs \
         --metadata_yaml ~{metadata_yaml} \
-        --reference ~{reference.reference} \
-        --reference_name ~{reference.genome_name} \
-        --reference_version ~{reference.genome_version} \
-        --supplementary_references_json ~{write_json(supplementary_references)} \
+        --reference ~{reference.genome_name},~{reference.genome_version},~{reference.reference} \
+        $supplementary \
         --tempdir tempdir \
         --adapter1 ~{adapter1} \
         --adapter2 ~{adapter2} \
@@ -64,8 +66,6 @@ task AlignPostprocessAllLanes{
         --bam_output aligned.bam \
         --metrics_output metrics.csv.gz \
         --metrics_gc_output gc_metrics.csv.gz \
-        --fastqscreen_detailed_output detailed_fastqscreen.csv.gz \
-        --fastqscreen_summary_output summary_fastqscreen.csv.gz \
         --tar_output ~{cell_id}.tar.gz \
         --num_threads ~{num_threads} \
         ~{true='--run_fastq' false='' run_fastq}
@@ -77,10 +77,6 @@ task AlignPostprocessAllLanes{
         File metrics_yaml = "metrics.csv.gz.yaml"
         File gc_metrics = "gc_metrics.csv.gz"
         File gc_metrics_yaml = "gc_metrics.csv.gz.yaml"
-        File fastqscreen_detailed_metrics = "detailed_fastqscreen.csv.gz"
-        File fastqscreen_detailed_metrics_yaml = "detailed_fastqscreen.csv.gz.yaml"
-        File fastqscreen_summary_metrics = "summary_fastqscreen.csv.gz"
-        File fastqscreen_summary_metrics_yaml = "summary_fastqscreen.csv.gz.yaml"
         File tar_output = "~{cell_id}.tar.gz"
     }
     runtime{
@@ -258,8 +254,6 @@ task AlignmentMetadata{
         File metrics_yaml
         File gc_metrics
         File gc_metrics_yaml
-        File fastqscreen_detailed
-        File fastqscreen_detailed_yaml
         File tarfile
         File metadata_input
         String? singularity_image
@@ -274,7 +268,6 @@ task AlignmentMetadata{
         --contaminated ~{contaminated_bam} ~{contaminated_bai} \
         --metrics ~{metrics} ~{metrics_yaml} \
         --gc_metrics ~{gc_metrics} ~{gc_metrics_yaml} \
-        --fastqscreen_detailed ~{fastqscreen_detailed} ~{fastqscreen_detailed_yaml} \
         --tarfile ~{tarfile} --metadata_output metadata.yaml --metadata_input ~{metadata_input}
     >>>
     output{
