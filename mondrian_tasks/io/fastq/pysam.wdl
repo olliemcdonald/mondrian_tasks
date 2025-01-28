@@ -10,8 +10,9 @@ task GenerateIntervals{
         Int? memory_override
         Int? walltime_override
     }
+    # Changed this command's input to work with an Array and the mondrianutil's cli command that takes multiple options
     command<<<
-        variant_utils generate-intervals --reference ~{reference} --chromosomes ~{sep=" "  chromosomes} --size ~{interval_size} > intervals.txt
+        variant_utils generate-intervals --reference ~{reference} ~{chromosomes.map(chrom => "--chromosomes " + chrom).join(" ")} --size ~{interval_size} > intervals.txt
     >>>
     output{
         Array[String] intervals = read_lines('intervals.txt')
