@@ -12,7 +12,7 @@ task SplitBam{
         Int? walltime_override
     }
     command<<<
-        io_utils split-bam-by-barcode --infile ~{bam} --outdir outdir --tempdir tempdir --chromosomes ~{sep=" "chromosomes} --ncores ~{num_threads}
+        io_utils split-bam-by-barcode --infile ~{bam} --outdir outdir --tempdir tempdir --chromosomes ~{sep=" --chromosomes " chromosomes} --ncores ~{num_threads}
     >>>
     output{
         Array[File] cell_bams = glob('outdir/*bam')

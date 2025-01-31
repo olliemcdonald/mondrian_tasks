@@ -13,7 +13,7 @@ task GetGenomeSize{
 
     }
     command<<<
-        variant_utils genome-size --reference ~{reference} --chromosomes ~{sep=" "  chromosomes} > genome_size.txt
+        variant_utils genome-size --reference ~{reference} --chromosomes ~{sep=" --chromosomes " chromosomes} > genome_size.txt
     >>>
     output{
         String genome_size = read_string('genome_size.txt')
@@ -48,7 +48,7 @@ task GenerateChromDepth{
             do
                 GetChromDepth --align-file ~{normal_bam} --chrom ${interval} --output-file raw_data/${interval}.chrom_depth.txt
             done
-        variant_utils merge-chromosome-depths-strelka --inputs raw_data/* --output chrom_depth.txt
+        variant_utils merge-chromosome-depths-strelka  $(printf -- "--inputs %s " raw_data/*) --output chrom_depth.txt
 
     >>>
     output{
@@ -159,8 +159,8 @@ task RunStrelka{
                     --strelka-max-depth-factor ~{depth_filter_multiple}" >> commands.txt
                 done
             parallel --jobs ~{num_threads} < commands.txt
-            variant_utils merge-vcf-files --inputs *.snv.vcf --output merged_snv.vcf
-            variant_utils merge-vcf-files --inputs *.indels.vcf --output merged_indels.vcf
+            variant_utils merge-vcf-files  $(printf -- "--inputs %s " *.snv.vcf) --output merged_snv.vcf
+            variant_utils merge-vcf-files  $(printf -- "--inputs %s " *.indels.vcf) --output merged_indels.vcf
         fi
 
             variant_utils fix-museq-vcf --input merged_snv.vcf --output merged_snv.fixed.vcf

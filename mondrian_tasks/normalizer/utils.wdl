@@ -130,7 +130,7 @@ task SeparateTumourAndNormalMetadata{
         normalizer_utils separate-tumour-and-normal-metadata \
         --metadata_output metadata.yaml \
         --metadata_input ~{metadata_input} \
-        --heatmap ~{sep=" "heatmap} \
+        --heatmap ~{sep=" --heatmap " heatmap} \
         --normal_cells_yaml ~{normal_cells_yaml} \
         ~{normal_bam_arg} ~{tumour_bam_arg}
     >>>

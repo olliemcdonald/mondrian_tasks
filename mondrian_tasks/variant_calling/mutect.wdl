@@ -93,7 +93,7 @@ task RunMutect{
                     -R ~{reference} -O raw_data/${interval}.vcf.gz  --intervals ${interval} ">> commands.txt
                 done
             parallel --jobs ~{num_threads} < commands.txt
-            variant_utils merge-vcf-files --inputs raw_data/*vcf.gz --output merged.vcf
+            variant_utils merge-vcf-files $(printf -- "--inputs %s " raw_data/*vcf.gz) --output merged.vcf
             inputs=`ls raw_data/*stats | awk 'ORS=" -stats "' | head -c -8`
             echo $inputs
             gatk --java-options "-Xmx4G" MergeMutectStats \

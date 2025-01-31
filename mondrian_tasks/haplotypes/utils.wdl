@@ -164,7 +164,7 @@ task MergeSeqData{
         Int? walltime_override
     }
     command<<<
-        haplotype_utils merge-seqdata --inputs ~{sep=" "infiles} --output output.h5
+        haplotype_utils merge-seqdata --inputs ~{sep=" --inputs " infiles} --output output.h5
     >>>
     output{
         File merged_haps = "output.h5"
@@ -189,7 +189,7 @@ task MergeHaps{
         Int? walltime_override
     }
     command<<<
-        haplotype_utils merge-haps --inputs ~{sep=" "infiles} --output output.tsv
+        haplotype_utils merge-haps --inputs ~{sep=" --inputs " infiles} --output output.tsv
     >>>
     output{
         File merged_haps = "output.tsv"
@@ -248,7 +248,7 @@ task CreateSegments{
         haplotype_utils create-segments \
         --reference_fai ~{reference_fai} \
         --gap_table ~{gap_table} \
-        --chromosomes ~{sep=" "chromosomes} \
+        --chromosomes ~{sep=" --chromosomes " chromosomes} \
         --output output.tsv --tempdir temp
     >>>
     output{
@@ -306,8 +306,8 @@ task HaplotypesMetadata{
     command<<<
         haplotype_utils generate-metadata \
         --files ~{write_json(files)} \
-        --metadata_yaml_files ~{sep=" "metadata_yaml_files} \
-        --samples ~{sep=" "samples} \
+        --metadata_yaml_files ~{sep=" --metadata_yaml_files " metadata_yaml_files} \
+        -- samples ~{sep=" --samples " samples} \
         --metadata_output metadata.yaml
     >>>
     output{

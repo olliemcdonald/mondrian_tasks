@@ -35,7 +35,7 @@ task RunMuseq{
                 done
             parallel --jobs ~{num_threads} < museq_commands.txt
             if [ $? -ne 0 ]; then exit 1; fi
-            variant_utils merge-vcf-files --inputs museq_vcf/*vcf --output merged.vcf
+            variant_utils merge-vcf-files $(printf -- "--inputs %s " museq_vcf/*.vcf) --output merged.vcf
         fi
 
         variant_utils fix-museq-vcf --input merged.vcf --output merged.fixed.vcf

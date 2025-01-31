@@ -12,7 +12,7 @@ task MergePdf{
         Int? walltime_override
     }
     command<<<
-        io_utils merge-pdfs --infiles ~{sep=" "infiles} --outfile ~{filename_prefix}.pdf
+        io_utils merge-pdfs --infiles ~{sep=" --infiles " infiles} --outfile ~{filename_prefix}.pdf
     >>>
     output{
         File merged = '~{filename_prefix}.pdf'

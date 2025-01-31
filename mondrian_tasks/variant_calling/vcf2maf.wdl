@@ -105,7 +105,7 @@ task MergeMafs{
         Int? walltime_override
     }
     command<<<
-        variant_utils merge-mafs --infiles ~{sep=" "input_mafs} --output ~{filename_prefix}.maf
+        variant_utils merge-mafs --infiles ~{sep=" --infiles " input_mafs} --output ~{filename_prefix}.maf
     >>>
     output{
         File output_maf = "~{filename_prefix}.maf"

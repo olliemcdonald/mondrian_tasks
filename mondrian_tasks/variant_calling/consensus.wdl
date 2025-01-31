@@ -20,7 +20,7 @@ task RunConsensusCalling{
     command<<<
             variant_utils consensus --museq_vcf ~{museq_vcf} \
              --strelka_snv ~{strelka_snv} --strelka_indel ~{strelka_indel} \
-             --mutect_vcf ~{mutect_vcf} --chromosomes ~{sep=" "  chromosomes} \
+             --mutect_vcf ~{mutect_vcf} --chromosomes ~{sep=" --chromosomes " chromosomes} \
              --consensus_output consensus.vcf --counts_output counts.csv
     >>>
     output{

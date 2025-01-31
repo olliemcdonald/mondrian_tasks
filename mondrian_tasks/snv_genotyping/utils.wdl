@@ -192,11 +192,11 @@ task MergeVartrix{
     }
     command<<<
         snv_genotyping_utils merge-vartrix \
-        --barcodes ~{sep=" " barcodes} \
-        --variants ~{sep=" " variants} \
-        --ref_matrices ~{sep=" " ref_matrix} \
-        --alt_matrices ~{sep=" " alt_matrix} \
-        --vcf_files ~{sep=" " vcf_files} \
+        --barcodes ~{sep=" --barcodes " barcodes} \
+        --variants ~{sep=" --variants " variants} \
+        --ref_matrices ~{sep=" --ref_matrices " ref_matrix} \
+        --alt_matrices ~{sep=" --alt_matrices " alt_matrix} \
+        --vcf_files ~{sep=" --vcf_files " vcf_files} \
         --parsed_output ~{filename_prefix}_vartrix_parsed.csv.gz \
         --tempdir tempdir
     >>>

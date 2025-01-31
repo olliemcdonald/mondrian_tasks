@@ -125,7 +125,7 @@ task FinalizeCsv {
         Int? walltime_override
     }
     command {
-        variant_utils concat-csv  --inputs ~{sep=" " inputfile} --output concat.csv
+        variant_utils concat-csv  --inputs ~{sep=" --inputs " inputfile} --output concat.csv
 
     }
     output {
